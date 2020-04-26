@@ -1,0 +1,10 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <form class="form-inline" method="GET" id="search-form">
+        {% csrf_token %}
+        {{ form }}
+    </form>
+{% endblock %}
