@@ -1,10 +1,172 @@
 {% extends 'common/base.html' %}
 
+{% load staticfiles %}
+
+{% load crispy_forms_tags %}
+
+{% block css %}
+    <link href="{% static 'css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <form class="form-inline" method="GET" id="search-form">
-        {% csrf_token %}
-        {{ form }}
-    </form>
+    <h5 class="d-flex justify-content-center">
+        <u>Search Photos By</u>
+    </h5>
+
+    <div class="d-flex justify-content-center mt-5">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-outline-primary btn-toggle active">
+                <input type="radio" name="search-type" value="name" checked> Name
+            </label>
+            <label class="btn btn-outline-primary btn-toggle">
+                <input type="radio" name="search-type" value="co-ordinates"> Co-ordinates
+            </label>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center mt-5">
+        <!-- search form by name -->
+        <form class="form-inline" method="POST" name="search-form" id="search-by-name-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                {{ form.locations | as_crispy_field }}
+            </div>
+
+            <button type="submit" class="btn btn-success ml-5">Search</button>
+        </form>
+
+        <!-- search form by co-ordinates -->
+        <form class="form-inline" method="POST" name="search-form" id="search-by-co-ordinates-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                {{ form.latitude | as_crispy_field }}
+            </div>
+
+            <div class="form-group ml-4">
+                {{ form.longitude | as_crispy_field }}
+            </div>
+
+            <button type="submit" class="btn btn-success ml-5">Search</button>
+        </form>
+    </div>
+
+    <!-- search results will be displayed here -->
+    <div class="d-flex justify-content-center mt-5">
+        <div id="results"></div>
+    </div>
+
+    <!-- pagination -->
+    <div class="d-flex justify-content-center mt-5">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" id="next" href="#">Next 10 <span class="ml-1" aria-hidden="true">&raquo;</span></a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        let pageNumber = 1;
+        let searchType = 'name';
+        let data = {};
+
+        function search(pageNumber, searchType) {
+            // empty results
+            $('#results').empty();
+
+            // start loader
+            $('.container').loading('start');
+
+            // hide pagination
+            $('.pagination').hide();
+
+            if ('name' === searchType) {
+                data = {
+                    location_id: $('#id_locations').val(),
+                    page_number: pageNumber,
+                    search_type: searchType
+                }
+            } else {
+                data = {
+                    latitude: $('#id_latitude').val(),
+                    longitude: $('#id_longitude').val(),
+                    page_number: pageNumber,
+                    search_type: searchType
+                }
+            }
+
+            $.ajax({
+                url: '{% url 'search' %}',
+                type: 'post',
+                data: data,
+
+                success: function (json) {
+                    json.forEach(function (photo) {
+                        $("#results").append(
+                            '<img class="img-thumbnail" src="' + photo.thumbnail_url + '" alt="' + photo.title + '">'
+                        );
+                    });
+
+                    // show pagination
+                    $('.pagination').show()
+                },
+
+                error: function (xhr, errmsg, err) {
+                    console.log(err)
+                },
+
+                complete: function () {
+                    // start loader
+                    $('.container').loading('stop');
+                }
+            });
+
+        }
+
+        // search form submit
+        $('form[name="search-form"]').on('submit', function (event) {
+            event.preventDefault();
+            pageNumber = 1;
+            search(pageNumber, searchType);
+        });
+
+        // next button click
+        $('#next').on('click', function (event) {
+            event.preventDefault();
+            pageNumber++;
+            search(pageNumber, searchType);
+        });
+
+        // radio button click
+        $('input[name="search-type"]').on('click', function (event) {
+            if ('name' === $(this).val()) {
+                searchType = 'name';
+
+                // show/hide forms
+                $('#search-by-name-form').css('display', 'flex');
+                $('#search-by-co-ordinates-form').hide();
+
+                // reset inputs and required
+                $('#id_locations').val('').prop('required', true);
+                $('#id_latitude').prop('required', false);
+                $('#id_longitude').prop('required', false)
+            } else {
+                searchType = 'co-ordinates';
+
+                // show/hide forms
+                $('#search-by-co-ordinates-form').css('display', 'flex');
+                $('#search-by-name-form').hide();
+
+                // reset inputs and required
+                $('#id_latitude').val('').prop('required', true);
+                $('#id_longitude').val('').prop('required', true);
+                $('#id_locations').prop('required', false);
+            }
+        });
+    </script>
 {% endblock %}

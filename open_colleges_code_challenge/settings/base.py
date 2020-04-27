@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'apps.authentication',
     'apps.core',
     'apps.flickr',
+
+    # Third-party apps
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +130,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = (os.path.join('static'),)
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

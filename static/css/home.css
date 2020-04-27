@@ -1,0 +1,11 @@
+.img-thumbnail {
+    margin: 1rem;
+}
+
+.pagination {
+    display: none;
+}
+
+#search-by-co-ordinates-form {
+    display: none;
+}
