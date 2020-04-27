@@ -70,8 +70,8 @@ class LocationCreateView(SuccessMessageMixin, CreateView):
     """
     form_class = LocationForm
     template_name = 'flickr/create-location.html'
-    success_url = reverse_lazy('flickr:create-location')
-    success_message = 'added successfully'
+    success_url = reverse_lazy('create-location')
+    success_message = '%(name)s added successfully'
 
 
 class FavouritePhotoListView(ListView):

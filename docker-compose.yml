@@ -1,4 +1,6 @@
 web:
+  environment:
+    - SECRET_KEY=local
   build: .
   command: python manage.py runserver 0.0.0.0:8000
   volumes:
