@@ -8,3 +8,7 @@ body {
     background-color: #e3f2fd;
     margin-bottom: 1.5rem;
 }
+
+.img-thumbnail {
+    margin: 1rem;
+}

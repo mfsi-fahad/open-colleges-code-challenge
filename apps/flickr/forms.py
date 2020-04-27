@@ -15,3 +15,9 @@ class SearchForm(forms.Form):
         label='', required=False, max_digits=10, decimal_places=7,
         widget=forms.NumberInput(attrs={'placeholder': 'Longitude'})
     )
+
+
+class LocationForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        fields = ('name', 'latitude', 'longitude',)

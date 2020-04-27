@@ -1,11 +1,19 @@
-.img-thumbnail {
-    margin: 1rem;
-}
-
 .pagination {
     display: none;
 }
 
 #search-by-co-ordinates-form {
     display: none;
+}
+
+.image-wrap {
+    display: inline-block;
+    position: relative;
+}
+
+.favourite {
+    position: absolute;
+    top: 12px;
+    right: 6px;
+    cursor: pointer;
 }

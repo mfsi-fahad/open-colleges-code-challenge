@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from .models import Location
+from .models import Location, FavouritePhoto
 
-admin.site.register([Location, ])
+admin.site.register([Location, FavouritePhoto, ])

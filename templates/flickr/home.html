@@ -107,13 +107,29 @@
 
                 success: function (json) {
                     json.forEach(function (photo) {
-                        $("#results").append(
-                            '<img class="img-thumbnail" src="' + photo.thumbnail_url + '" alt="' + photo.title + '">'
-                        );
+                        if (photo.is_favourite) {
+                            $("#results").append(
+                                '<span class="image-wrap">' +
+                                '<img onClick="toggleFavourite(\'' + photo.uid + '\',' + photo.farm + ',\'' + photo.server +
+                                '\', \'' + photo.secret + '\', \'' + photo.title + '\')" ' +
+                                'class="favourite" src="{% static 'icons/star-fill.svg' %}">' +
+                                '<img class="img-thumbnail" src="' + photo.thumbnail_url + '" alt="' + photo.title + '">' +
+                                '</span>'
+                            );
+                        } else {
+                            $("#results").append(
+                                '<span class="image-wrap">' +
+                                '<img onClick="toggleFavourite(\'' + photo.uid + '\',' + photo.farm + ',\'' + photo.server +
+                                '\', \'' + photo.secret + '\', \'' + photo.title + '\')" ' +
+                                'class="favourite" src="{% static 'icons/star.svg' %}">' +
+                                '<img class="img-thumbnail" src="' + photo.thumbnail_url + '" alt="' + photo.title + '">' +
+                                '</span>'
+                            );
+                        }
                     });
 
                     // show pagination
-                    $('.pagination').show()
+                    $('.pagination').show();
                 },
 
                 error: function (xhr, errmsg, err) {
@@ -168,5 +184,41 @@
                 $('#id_locations').prop('required', false);
             }
         });
+    </script>
+    <script>
+        function toggleFavourite(uid, farm, server, secret, title) {
+            const iconElement = $(event.srcElement);
+
+            // start loader
+            $('.container').loading('start');
+
+            $.ajax({
+                url: '{% url 'toggle-favourite' %}',
+                type: 'post',
+                data: {
+                    'uid': uid,
+                    'farm': farm,
+                    'server': server,
+                    'secret': secret,
+                    'title': title
+                },
+
+                success: function (data) {
+                    if (data.is_favourite === true) {
+                        iconElement.prop('src', '{% static 'icons/star-fill.svg' %}')
+                    } else {
+                        iconElement.prop('src', '{% static 'icons/star.svg' %}')
+                    }
+                },
+
+                error: function (xhr, errmsg, err) {
+                    console.log(err)
+                },
+
+                complete: function () {
+                    $('.container').loading('stop');
+                }
+            });
+        }
     </script>
 {% endblock %}

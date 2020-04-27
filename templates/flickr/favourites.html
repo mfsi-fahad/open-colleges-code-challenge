@@ -1,0 +1,19 @@
+{% extends 'common/base.html' %}
+
+{% load staticfiles %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Add Location{% endblock %}
+
+{% block content %}
+    <h5 class="d-flex justify-content-center">
+        <u>Favourites</u>
+    </h5>
+
+    <div class="row mt-5">
+        {% for favourite_photo in favourite_photos %}
+            <img class="img-thumbnail" src="{{ favourite_photo.thumbnail_url }}" alt="{{ favourite_photo.title }}">
+        {% endfor %}
+    </div>
+{% endblock %}
